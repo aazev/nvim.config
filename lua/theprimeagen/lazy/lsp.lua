@@ -29,6 +29,7 @@ return {
             ensure_installed = {
                 "php-cs-fixer",
                 "jsonlint",
+                "bacon",
             },
         })
         require("mason-lspconfig").setup({
@@ -101,8 +102,8 @@ return {
                         procMacro = {
                             enable = true
                         },
-                        checkOnSave = {
-                            command = "clippy"
+                        diagnostics = {
+                            enable = false
                         },
                         formatOnSave = true,
                         inlay_hints = {
@@ -118,6 +119,22 @@ return {
                         end
                     }
                 end,
+
+                -- ["bacon-ls"] = function()
+                --     local lspconfig = require("lspconfig")
+                --     lspconfig.bacon_ls.setup {
+                --         capabilities = capabilities,
+                --         init_options = {
+                --             runBaconInBackground = true,
+                --             updateOnSave = true,
+                --             updateOnSaveWaitMilliseconds = 1000,
+                --             updateOnChange = false,
+                --         },
+                --         on_attach = function(client, bufnr)
+                --             vim.lsp.inlay_hint.enable(true)
+                --         end
+                --     }
+                -- end,
 
                 ["ts_ls"] = function()
                     local lspconfig = require("lspconfig")
@@ -169,6 +186,20 @@ return {
                     }
                 end,
             }
+        })
+
+        local lspconfig = require("lspconfig")
+        lspconfig.bacon_ls.setup({
+            capabilities = capabilities,
+            init_options = {
+                runBaconInBackground = true,
+                updateOnSave = true,
+                updateOnSaveWaitMilliseconds = 1000,
+                updateOnChange = false,
+            },
+            on_attach = function(client, bufnr)
+                vim.lsp.inlay_hint.enable(true)
+            end
         })
 
         local cmp_select = { behavior = cmp.SelectBehavior.Select }

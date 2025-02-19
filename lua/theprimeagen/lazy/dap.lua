@@ -19,16 +19,16 @@ local function get_args()
 end
 
 local function pick_port(default_port)
-  local co = coroutine.running()
-  return coroutine.create(function()
-    vim.ui.input({
-      prompt = "Enter debug port: ",
-      default = tostring(default_port),
-    }, function(input)
-      local port_num = tonumber(input) or default_port
-      coroutine.resume(co, port_num)
+    local co = coroutine.running()
+    return coroutine.create(function()
+        vim.ui.input({
+            prompt = "Enter debug port: ",
+            default = tostring(default_port),
+        }, function(input)
+            local port_num = tonumber(input) or default_port
+            coroutine.resume(co, port_num)
+        end)
     end)
-  end)
 end
 
 return {
@@ -62,11 +62,37 @@ return {
                 }
             },
             { "nvim-neotest/nvim-nio" },
+            {
+                "jay-babu/mason-nvim-dap.nvim",
+                config = function()
+                    require("mason-nvim-dap").setup({
+                        ensure_installed = {
+                            "codelldb",
+                        },
+                    })
+                end,
+            },
         },
         config = function()
             vim.api.nvim_set_hl(0, "DapStoppedLine", { default = true, link = "Visual" })
 
             local dap, dapui = require("dap"), require("dapui")
+
+            dap.configurations.php = {
+                {
+                    type = "php",
+                    request = "launch",
+                    name = "Listen for Xdebug",
+                    port = pick_port(9003),
+                    stopOnEntry = false,
+                    pathMappings = {
+                        {
+                            localRoot = "${workspaceFolder}",
+                            remoteRoot = "${workspaceFolder}",
+                        },
+                    },
+                },
+            }
 
             for _, language in ipairs(js_based_languages) do
                 dap.configurations[language] = {
@@ -76,7 +102,7 @@ return {
                         request = "launch",
                         name = "Launch file",
                         program = "${file}",
-                        cwd = vim.fn.getcwd(),
+                        cwd = '${workspaceFolder}',
                         sourceMaps = true,
                     },
                     -- Debug nodejs processes (make sure to add --inspect when you run the process)
@@ -85,7 +111,7 @@ return {
                         request = "attach",
                         name = "Attach",
                         processId = require("dap.utils").pick_process,
-                        cwd = vim.fn.getcwd(),
+                        cwd = '${workspaceFolder}',
                         sourceMaps = true,
                         port = pick_port(9229),
                     },
@@ -109,7 +135,7 @@ return {
                                 end)
                             end)
                         end,
-                        webRoot = vim.fn.getcwd(),
+                        webRoot = '${workspaceFolder}',
                         protocol = "inspector",
                         sourceMaps = true,
                         userDataDir = false,
@@ -138,6 +164,71 @@ return {
         end,
     },
     {
+        'vadimcn/codelldb',
+        dependencies = {
+            {
+                'mfussenegger/nvim-dap',
+                {
+                    'theHamsta/nvim-dap-virtual-text',
+                    opts = {},
+                }
+            },
+        },
+        adapter = function()
+            return require('dap').adapters.codelldb
+        end,
+        config = function()
+            local dap = require('dap')
+            dap.adapters.codelldb = {
+                type = 'executable',
+                command = 'codelldb',
+                name = "codelldb"
+            }
+            dap.configurations.rust = {
+                {
+                    type = 'codelldb',
+                    name = "Launch",
+                    request = "launch",
+                    program = function()
+                        vim.fn.jobstart("cargo build", { cwd = vim.fn.getcwd() })
+                        return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/target/debug/", "file")
+                    end,
+                    cwd = '${workspaceFolder}',
+                    stopOnEntry = false,
+                    args = {},
+                    runInTerminal = false,
+                    showDisassembly = "never",
+                },
+                {
+                    type = 'codelldb',
+                    name = "Debug unit tests",
+                    request = "launch",
+                    program = "cargo",
+                    cwd = '${workspaceFolder}',
+                    stopOnEntry = false,
+                    args = {
+                        "test",
+                        "--no-run",
+                    },
+                    runInTerminal = true,
+                    showDisassembly = "never",
+                },
+                {
+                    type = 'codelldb',
+                    name = "Attach to process",
+                    request = "attach",
+                    pid = function()
+                        return vim.fn.input("Process ID: ")
+                    end,
+                    stopOnEntry = false,
+                    args = {},
+                    runInTerminal = false,
+                    showDisassembly = "never",
+                },
+            }
+        end,
+    },
+    {
         "microsoft/vscode-js-debug",
         -- a pinned version or "latest" is recommended
         version = "1.x",
@@ -156,4 +247,15 @@ return {
             })
         end
     },
+    -- {
+    --     "xdebug/vscode-php-debug",
+    --     dependencies = { "mfussenegger/nvim-dap" },
+    --     config = function()
+    --         require("php-debug-adapter").setup({
+    --             -- Set this to wherever "vscode-php-debug" was installed.
+    --             -- The line below typically points to the Lazy-managed location:
+    --             debugger_path = vim.fn.stdpath("data") .. "/lazy/vscode-php-debug",
+    --         })
+    --     end
+    -- }
 }

@@ -132,7 +132,7 @@ end
 local group = vim.api.nvim_create_augroup("GitBranchStatusline", { clear = true })
 
 -- Create an autocommand that triggers on BufEnter
-vim.api.nvim_create_autocmd("BufEnter", {
+vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "CursorHold", "FocusGained" }, {
     group = group,
     callback = function()
         -- Change the local directory to the directory of the current file

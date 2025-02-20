@@ -57,13 +57,35 @@ vim.g.netrw_banner = 0
 vim.g.netrw_winsize = 25
 vim.opt.fileformats = { "unix", "dos", "mac" }
 
--- Define highlight groups for the Git status colors
-vim.cmd("highlight GitGreen  guifg=green  guibg=none")
-vim.cmd("highlight GitYellow guifg=yellow guibg=none")
-vim.cmd("highlight GitRed    guifg=red    guibg=none")
-vim.cmd("highlight GitBlue   guifg=blue   guibg=none")
-vim.cmd("highlight GitPurple guifg=purple guibg=none")
-vim.cmd("highlight GitPink   guifg=pink   guibg=none")
+-- Helper to get StatusLine group's background color as a hex string (or "NONE")
+local function get_statusline_bg()
+    local ok, hl = pcall(vim.api.nvim_get_hl_by_name, "StatusLine", true)
+    if ok and hl and hl.background then
+        return string.format("#%06x", hl.background)
+    else
+        return "NONE"
+    end
+end
+
+-- Function to define Git highlight groups based on the current Normal background
+local function setup_git_highlights()
+    local statusbar_bg = get_statusline_bg()
+    vim.cmd("highlight GitGreen  guifg=green  guibg=" .. statusbar_bg)
+    vim.cmd("highlight GitYellow guifg=yellow guibg=" .. statusbar_bg)
+    vim.cmd("highlight GitRed    guifg=red    guibg=" .. statusbar_bg)
+    vim.cmd("highlight GitBlue   guifg=blue   guibg=" .. statusbar_bg)
+    vim.cmd("highlight GitPurple guifg=purple guibg=" .. statusbar_bg)
+    vim.cmd("highlight GitPink   guifg=pink   guibg=" .. statusbar_bg)
+end
+
+setup_git_highlights()
+
+-- Re-setup highlights when a colorscheme is loaded/changed.
+vim.api.nvim_create_autocmd("ColorScheme", {
+    callback = function()
+        setup_git_highlights()
+    end,
+})
 
 -- Helper function to determine Git status color
 local function get_git_status_color()

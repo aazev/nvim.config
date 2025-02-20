@@ -91,38 +91,38 @@ return {
     --         -- ColorMyPencils("tokyonight")
     --     end
     -- },
-    -- {
-    --     "rose-pine/neovim",
-    --     name = "rose-pine",
-    --     config = function()
-    --         require('rose-pine').setup({
-    --             disable_background = true,
-    --             styles = {
-    --                 italic = false,
-    --             },
-    --         })
-
-    --         -- vim.cmd("colorscheme rose-pine")
-
-    --         -- ColorMyPencils()
-    --     end
-    -- },
     {
-        "EdenEast/nightfox.nvim",
-        name = "nightfox",
+        "rose-pine/neovim",
+        name = "rose-pine",
         config = function()
-            require("nightfox").setup({
-                transparent = true,
-                terminal_colors = true,
-                dim_inactive = true,
+            require('rose-pine').setup({
+                disable_background = true,
                 styles = {
                     italic = false,
                 },
             })
 
-            vim.cmd("colorscheme carbonfox")
+            vim.cmd("colorscheme rose-pine")
 
-            ColorMyPencils("carbonfox")
+            ColorMyPencils()
         end
     },
+    -- {
+    --     "EdenEast/nightfox.nvim",
+    --     name = "nightfox",
+    --     config = function()
+    --         require("nightfox").setup({
+    --             transparent = true,
+    --             terminal_colors = true,
+    --             dim_inactive = true,
+    --             styles = {
+    --                 italic = false,
+    --             },
+    --         })
+
+    --         vim.cmd("colorscheme carbonfox")
+
+    --         ColorMyPencils("carbonfox")
+    --     end
+    -- },
 }

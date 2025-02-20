@@ -57,6 +57,17 @@ vim.g.netrw_banner = 0
 vim.g.netrw_winsize = 25
 vim.opt.fileformats = { "unix", "dos", "mac" }
 
+function abbreviateString(s, maxWidth)
+    if #s <= maxWidth then
+        return s
+    end
+
+    local startLength = math.floor((maxWidth - 3) / 2)
+    local endLength = math.ceil((maxWidth - 3) / 2)
+
+    return s:sub(1, startLength) .. "..." .. s:sub(-endLength)
+end
+
 -- Helper to get StatusLine group's background color as a hex string (or "NONE")
 local function get_statusline_bg()
     local ok, hl = pcall(vim.api.nvim_get_hl_by_name, "StatusLine", true)
@@ -144,7 +155,8 @@ local function set_statusline_with_branch()
     local branch = GitGetCurrentBranch()
     if branch ~= "" then
         local color = get_git_status_color()
-        vim.opt_local.statusline = color .. branch .. "%#StatusLine#" .. "%<%f%h%m%r%=%-14.(%l,%c%V%) %P"
+        local abbreviateBranch = abbreviateString(branch, 40)
+        vim.opt_local.statusline = color .. abbreviateBranch .. "%#StatusLine#" .. "%<%f%h%m%r%=%-14.(%l,%c%V%) %P"
     else
         vim.opt_local.statusline = "%<%f%h%m%r%=%-14.(%l,%c%V%) %P"
     end

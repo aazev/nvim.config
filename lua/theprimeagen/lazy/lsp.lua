@@ -40,7 +40,7 @@ return {
                 "tailwindcss",
                 "intelephense",
                 "phpactor",
-                "eslint",
+                "biome"
             },
             handlers = {
                 function(server_name) -- default handler (optional)
@@ -157,9 +157,23 @@ return {
                     }
                 end,
 
-                ["eslint"] = function()
+                -- ["eslint"] = function()
+                --     local lspconfig = require("lspconfig")
+                --     lspconfig.eslint.setup {
+                --         capabilities = capabilities,
+                --         cmd_env = {
+                --             NODE_OPTIONS = "--max_old_space_size=8192"
+                --         },
+                --         on_attach = function(client, bufnr)
+                --             client.server_capabilities.documentFormattingProvider = true
+                --             vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
+                --         end
+                --     }
+                -- end,
+
+                ["biome"] = function()
                     local lspconfig = require("lspconfig")
-                    lspconfig.eslint.setup {
+                    lspconfig.biome.setup {
                         capabilities = capabilities,
                         cmd_env = {
                             NODE_OPTIONS = "--max_old_space_size=8192"

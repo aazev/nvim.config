@@ -174,12 +174,32 @@ return {
                 ["biome"] = function()
                     local lspconfig = require("lspconfig")
                     lspconfig.biome.setup {
+                        cmd = { "biome", "lsp-proxy" },
+                        root_dir = function(fname)
+                            return lspconfig.util.root_pattern("biome.json", "biome.jsonc")(fname)
+                                or lspconfig.util.find_git_ancestor(fname)
+                                or vim.loop.cwd()
+                        end,
+                        single_file_support = false,
                         capabilities = capabilities,
                         cmd_env = {
                             NODE_OPTIONS = "--max_old_space_size=8192"
                         },
+                        filetypes = {
+                            "astro",
+                            "css",
+                            "graphql",
+                            "javascript",
+                            "javascriptreact",
+                            "json",
+                            "jsonc",
+                            "svelte",
+                            "typescript",
+                            "typescript.tsx",
+                            "typescriptreact",
+                            "vue",
+                        },
                         on_attach = function(client, bufnr)
-                            client.server_capabilities.documentFormattingProvider = true
                             vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
                         end
                     }

@@ -180,7 +180,7 @@ return {
                                 or lspconfig.util.find_git_ancestor(fname)
                                 or vim.loop.cwd()
                         end,
-                        single_file_support = false,
+                        single_file_support = true,
                         capabilities = capabilities,
                         cmd_env = {
                             NODE_OPTIONS = "--max_old_space_size=8192"

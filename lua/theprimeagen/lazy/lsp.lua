@@ -105,6 +105,9 @@ return {
                         diagnostics = {
                             enable = false
                         },
+                        checkOnSave = {
+                            command = "clippy"
+                        },
                         formatOnSave = true,
                         inlay_hints = {
                             show_parameter_hints = true,

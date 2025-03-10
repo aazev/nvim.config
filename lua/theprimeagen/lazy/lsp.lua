@@ -234,6 +234,11 @@ return {
                 updateOnSaveWaitMilliseconds = 1000,
                 updateOnChange = false,
             },
+            root_dir = function(fname)
+                return lspconfig.util.root_pattern("bacon.json")(fname)
+                    or lspconfig.util.find_git_ancestor(fname)
+                    or vim.loop.cwd()
+            end,
             on_attach = function(client, bufnr)
                 vim.lsp.inlay_hint.enable(true)
             end

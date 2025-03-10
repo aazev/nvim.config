@@ -28,7 +28,6 @@ return {
         require("mason-tool-installer").setup({
             ensure_installed = {
                 "php-cs-fixer",
-                "jsonlint",
                 "bacon",
             },
         })

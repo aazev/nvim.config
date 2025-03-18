@@ -57,7 +57,7 @@ vim.g.netrw_banner = 0
 vim.g.netrw_winsize = 25
 vim.opt.fileformats = { "unix", "dos", "mac" }
 
-function abbreviateString(s, maxWidth)
+local function abbreviateString(s, maxWidth)
     if #s <= maxWidth then
         return s
     end

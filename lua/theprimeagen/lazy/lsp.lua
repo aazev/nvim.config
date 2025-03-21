@@ -104,7 +104,7 @@ return {
                             enable = false
                         },
                         checkOnSave = {
-                            command = "clippy"
+                            enable = false
                         },
                         formatOnSave = true,
                         inlay_hints = {
@@ -113,6 +113,13 @@ return {
                             type_hints = true,
                             type_hints_prefix = " » ",
                             max_length = 80,
+                        },
+                        settings = {
+                            ["rust-analyzer"] = {
+                                checkOnSave = {
+                                    enable = false
+                                },
+                            }
                         },
                         on_attach = function(client, bufnr)
                             vim.lsp.inlay_hint.enable(true)

@@ -195,7 +195,10 @@ return {
                     end,
                     cwd = '${workspaceFolder}',
                     stopOnEntry = false,
-                    args = {},
+                    args = function()
+                        local arg_string = vim.fn.input("Command line arguments: ", "")
+                        return vim.split(arg_string, " ")
+                    end,
                     runInTerminal = false,
                     showDisassembly = "never",
                 },

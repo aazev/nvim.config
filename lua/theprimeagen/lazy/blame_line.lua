@@ -15,7 +15,7 @@ return {
                 format = "%d/%m/%Y",
             },
             hl_group = "BlameLineNvim",
-            delay = 0
+            delay = 300
         })
     end,
 }

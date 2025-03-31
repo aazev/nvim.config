@@ -30,3 +30,6 @@ vim.opt.updatetime = 50
 
 vim.opt.colorcolumn = "120"
 vim.opt.cursorline = true
+
+vim.opt.laststatus = 2
+vim.opt.showmode = false

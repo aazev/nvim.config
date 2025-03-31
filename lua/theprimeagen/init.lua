@@ -89,7 +89,26 @@ local function setup_git_highlights()
     vim.cmd("highlight GitPink   guifg=pink   guibg=" .. statusbar_bg)
 end
 
+-- Function to define Vim's highlight groups for Vim modes
+local function setup_vim_highlights()
+    local statusbar_bg = get_statusline_bg()
+    vim.cmd("highlight VimNormal guifg=" .. statusbar_bg .. " guibg=white")
+    vim.cmd("highlight VimInsert guifg=" .. statusbar_bg .. " guibg=green")
+    vim.cmd("highlight VimVisual guifg=" .. statusbar_bg .. " guibg=blue")
+    vim.cmd("highlight VimReplace guifg=" .. statusbar_bg .. " guibg=red")
+    vim.cmd("highlight VimCommand guifg=" .. statusbar_bg .. " guibg=yellow")
+    vim.cmd("highlight VimSelect guifg=" .. statusbar_bg .. " guibg=purple")
+
+    vim.cmd("highlight VimNormalSeparator guifg=white guibg=" .. statusbar_bg)
+    vim.cmd("highlight VimInsertSeparator guifg=green guibg=" .. statusbar_bg)
+    vim.cmd("highlight VimVisualSeparator guifg=blue guibg=" .. statusbar_bg)
+    vim.cmd("highlight VimReplaceSeparator guifg=red guibg=" .. statusbar_bg)
+    vim.cmd("highlight VimCommandSeparator guifg=yellow guibg=" .. statusbar_bg)
+    vim.cmd("highlight VimSelectSeparator guifg=purple guibg=" .. statusbar_bg)
+end
+
 setup_git_highlights()
+setup_vim_highlights()
 
 -- Re-setup highlights when a colorscheme is loaded/changed.
 vim.api.nvim_create_autocmd("ColorScheme", {
@@ -136,6 +155,66 @@ local function get_git_status_color()
     return "%#GitGreen#"
 end
 
+-- Function to get the current vim mode color
+local function get_vim_mode_color()
+    local mode = vim.fn.mode()
+    if mode == "n" then
+        return "%#VimNormal#"
+    elseif mode == "i" then
+        return "%#VimInsert#"
+    elseif mode == "v" or mode == "V" or mode == "\22" then
+        return "%#VimVisual#"
+    elseif mode == "r" or mode == "Rv" then
+        return "%#VimReplace#"
+    elseif mode == "c" then
+        return "%#VimCommand#"
+    elseif mode == "s" or mode == "S" then
+        return "%#VimSelect#"
+    end
+    return "%#VimNormal#"
+end
+
+-- Function to get the separator color
+local function get_vim_separator_color()
+    local mode = vim.fn.mode()
+    if mode == "n" then
+        return "%#VimNormalSeparator#"
+    elseif mode == "i" then
+        return "%#VimInsertSeparator#"
+    elseif mode == "v" or mode == "V" or mode == "\22" then
+        return "%#VimVisualSeparator#"
+    elseif mode == "r" or mode == "Rv" then
+        return "%#VimReplaceSeparator#"
+    elseif mode == "c" then
+        return "%#VimCommandSeparator#"
+    elseif mode == "s" or mode == "S" then
+        return "%#VimSelectSeparator#"
+    end
+    return "%#VimNormalSeparator#"
+end
+
+-- Function to get colored and formatted Vim mode string
+local function get_vim_mode_string()
+    local mode = vim.fn.mode()
+    local vimColor = get_vim_mode_color()
+    local vimSeparatorColor = get_vim_separator_color()
+
+    if mode == "n" then
+        return vimColor .. " NORMAL " .. vimSeparatorColor .. " "
+    elseif mode == "i" then
+        return vimColor .. " INSERT " .. vimSeparatorColor .. " "
+    elseif mode == "v" or mode == "V" or mode == "\22" then
+        return vimColor .. " VISUAL " .. vimSeparatorColor .. " "
+    elseif mode == "r" or mode == "Rv" then
+        return vimColor .. " REPLACE " .. vimSeparatorColor .. " "
+    elseif mode == "c" then
+        return vimColor .. " COMMAND " .. vimSeparatorColor .. " "
+    elseif mode == "s" or mode == "S" then
+        return vimColor .. " SELECT " .. vimSeparatorColor .. " "
+    end
+    return vimColor .. " NORMAL " .. vimSeparatorColor .. " "
+end
+
 -- Define a function to get the current git branch name
 local function GitGetCurrentBranch()
     -- Execute the git command and capture its output
@@ -151,16 +230,29 @@ local function GitGetCurrentBranch()
 end
 
 -- Define a function to set the statusline with Git branch info
-local function set_statusline_with_branch()
+local function set_statusline()
     local branch = GitGetCurrentBranch()
+    local vimModeString = get_vim_mode_string()
+
     if branch ~= "" then
-        local color = get_git_status_color()
+        local gitColor = get_git_status_color()
         local abbreviateBranch = abbreviateString(branch, 40)
-        vim.opt_local.statusline = color .. abbreviateBranch .. "%#StatusLine#" .. "%<%f%h%m%r%=%-14.(%l,%c%V%) %P"
+
+        vim.opt_local.statusline = vimModeString ..
+            gitColor .. abbreviateBranch .. "%#StatusLine#" .. "%<%f%h%m%r%=%-14.(%l,%c%V%) %P"
     else
-        vim.opt_local.statusline = "%<%f%h%m%r%=%-14.(%l,%c%V%) %P"
+        vim.opt_local.statusline = vimModeString .. "%<%f%h%m%r%=%-14.(%l,%c%V%) %P"
     end
 end
+
+-- Create an autocommand to update the statusline whenever vim status changes
+vim.api.nvim_create_autocmd("ModeChanged", {
+    group = ThePrimeagenGroup,
+    callback = function()
+        set_statusline()
+    end,
+})
+
 
 -- Create an augroup to avoid duplicate autocommands
 local group = vim.api.nvim_create_augroup("GitBranchStatusline", { clear = true })
@@ -172,6 +264,6 @@ vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "CursorHold", "FocusGa
         -- Change the local directory to the directory of the current file
         --vim.cmd("lcd %:p:h")
         -- Update the statusline with the Git branch information
-        set_statusline_with_branch()
+        set_statusline()
     end,
 })

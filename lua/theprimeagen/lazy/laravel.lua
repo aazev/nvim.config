@@ -3,9 +3,7 @@ return {
     cond = function()
         -- Check if PHP is available in the system
         local php_installed = vim.fn.executable("php") == 1
-        -- Check if a composer.json file exists in the current working directory
-        local composer_exists = vim.fn.filereadable(vim.fn.getcwd() .. "/composer.json") == 1
-        return php_installed and composer_exists
+        return php_installed
     end,
     dependencies = {
         "tpope/vim-dotenv",

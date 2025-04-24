@@ -247,7 +247,7 @@ return {
                 updateOnChange = false,
             },
             root_dir = function(fname)
-                return lspconfig.util.root_pattern("bacon.json")(fname)
+                return lspconfig.util.root_pattern("bacon.toml")(fname)
                     or lspconfig.util.find_git_ancestor(fname)
                     or vim.loop.cwd()
             end,

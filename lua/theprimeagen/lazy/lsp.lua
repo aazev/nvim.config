@@ -246,12 +246,31 @@ return {
                 updateOnSaveWaitMilliseconds = 1000,
                 updateOnChange = false,
             },
+            settings = {
+                cargo_command_args =
+                "clippy --tests --all-targets --message-format json-diagnostic-rendered-ansi",
+                bacon = {
+                    format = {
+                        enable = true,
+                        autoFixOnFormat = true,
+                        autoFixOnSave = true,
+                    },
+                    lint = {
+                        enable = true,
+                        autoFixOnLint = true,
+                    },
+                }
+            },
             root_dir = function(fname)
                 return lspconfig.util.root_pattern("bacon.toml")(fname)
                     or lspconfig.util.find_git_ancestor(fname)
                     or vim.loop.cwd()
             end,
             on_attach = function(client, bufnr)
+                vim.diagnostic.config({
+                    virtual_text = true,
+                    virtual_lines = false,
+                })
                 vim.lsp.inlay_hint.enable(true)
             end
         })

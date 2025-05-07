@@ -29,9 +29,9 @@ return {
     --             },
     --         })
 
-    --         -- vim.cmd("colorscheme dracula")
+    --         vim.cmd("colorscheme dracula")
 
-    --         -- ColorMyPencils("dracula")
+    --         ColorMyPencils("dracula")
     --     end
     -- },
     -- {
@@ -48,7 +48,7 @@ return {
     --             theme = "darcula-dark",
     --             transparent = true,
     --             term_colors = true,
-    --             disable_background = true,
+    --             dim_inactive = true,
     --             styles = {
     --                 -- Style to be applied to different syntax groups
     --                 -- Value is any valid attr-list value for `:help nvim_set_hl`
@@ -61,9 +61,9 @@ return {
     --             },
     --         })
 
-    --         -- vim.cmd("colorscheme darcula-dark")
+    --         vim.cmd("colorscheme darcula-dark")
 
-    --         -- ColorMyPencils("darcula-dark")
+    --         ColorMyPencils("darcula-dark")
     --     end
     -- },
     -- {
@@ -123,6 +123,105 @@ return {
     --         vim.cmd("colorscheme carbonfox")
 
     --         ColorMyPencils("carbonfox")
+    --     end
+    -- },
+    -- {
+    --     "metalelf0/black-metal-theme-neovim",
+    --     name = "black-metal",
+    --     priority = 1000,
+    --     config = function()
+    --         require("black-metal").setup({
+    --             theme = "bathory",
+    --             transparent = true,
+    --             term_colors = true,
+    --             dim_inactive = true,
+    --             styles = {
+    --                 italic = false,
+    --             },
+    --         })
+
+    --         -- vim.cmd("colorscheme black-metal")
+
+    --         -- ColorMyPencils("black-metal")
+    --         require("black-metal").load("bathory")
+    --     end
+    -- },
+    -- {
+    --     "navarasu/onedark.nvim",
+    --     name = "onedark",
+    --     priority = 1000,
+    --     config = function()
+    --         require("onedark").setup({
+    --             style = "darker",
+    --             transparent = true,
+    --             term_colors = true,
+    --             dim_inactive = true,
+    --             styles = {
+    --                 italic = false,
+    --             },
+    --         })
+
+    --         -- vim.cmd("colorscheme onedark")
+
+    --         -- ColorMyPencils("onedark")
+    --         require("onedark").load()
+    --     end
+    -- },
+    -- {
+    --     "olimorris/onedarkpro.nvim",
+    --     name = "onedarkpro",
+    --     priority = 1000,
+    --     config = function()
+    --         require("onedarkpro").setup({
+    --             options = {
+    --                 transparency = true,
+    --                 terminal_colors = true,
+    --                 cursorline = true,
+    --                 highlight_inactive_windows = true,
+    --             },
+    --             style = "onedark dark",
+    --             highlights = {
+    --                 Comment = { italic = false },
+    --                 Keyword = { italic = false },
+    --                 Function = { italic = false },
+    --                 Gutter = { bg = "none" },
+    --                 StatusLine = { fg = "black" },
+    --             },
+    --         })
+
+    --         vim.cmd("colorscheme onedark")
+
+    --         ColorMyPencils("onedark")
+    --         -- require("onedarkpro").load("onedark")
+    --     end
+    -- },
+    -- {
+    --     "rebelot/kanagawa.nvim",
+    --     name = "kanagawa",
+    --     priority = 1000,
+    --     config = function()
+    --         require("kanagawa").setup({
+    --             compile = false,
+    --             transparent = true,
+    --             dimInactive = true,
+    --             commentStyle = { italic = false },
+    --             functionStyle = { italic = false },
+    --             keywordStyle = { italic = false },
+    --             theme = "dragon",
+    --             colors = {
+    --                 theme = {
+    --                     all = {
+    --                         ui = {
+    --                             bg_gutter = "none",
+    --                         },
+    --                     },
+    --                 },
+    --             },
+    --         })
+
+    --         vim.cmd("colorscheme kanagawa-dragon")
+
+    --         -- ColorMyPencils("kanagawa-dragon")
     --     end
     -- },
 }

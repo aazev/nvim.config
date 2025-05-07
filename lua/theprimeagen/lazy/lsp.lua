@@ -34,11 +34,11 @@ return {
             ensure_installed = {
                 "lua_ls",
                 "ts_ls",
-                "rust_analyzer",
                 "tailwindcss",
                 "intelephense",
                 "phpactor",
-                "biome"
+                "biome",
+                "rust_analyzer",
             },
             handlers = {
                 function(server_name) -- default handler (optional)
@@ -95,34 +95,22 @@ return {
 
                 ["rust_analyzer"] = function()
                     local lspconfig = require("lspconfig")
-                    lspconfig.rust_analyzer.setup {
+                    lspconfig.rust_analyzer.setup({
                         capabilities = capabilities,
-                        cmd = { "/home/aazev/.cargo/bin/rust-analyzer" },
-                        cargo = {
-                            loadOutDirsFromCheck = true
-                        },
-                        procMacro = {
-                            enable = true
-                        },
-                        diagnostics = {
-                            enable = false
-                        },
-                        checkOnSave = {
-                            enable = false
-                        },
-                        formatOnSave = true,
-                        inlay_hints = {
-                            show_parameter_hints = true,
-                            parameter_hints_prefix = " » ",
-                            type_hints = true,
-                            type_hints_prefix = " » ",
-                            max_length = 80,
-                        },
                         settings = {
                             ["rust-analyzer"] = {
-                                checkOnSave = {
-                                    enable = false
+                                cargo = { loadOutDirsFromCheck = true },
+                                check = { command = "" },
+                                checkOnSave = { enable = false },
+                                diagnostics = { enable = false },
+                                inlay_hints = {
+                                    show_parameter_hints = true,
+                                    parameter_hints_prefix = " » ",
+                                    type_hints = true,
+                                    type_hints_prefix = " » ",
+                                    max_length = 80,
                                 },
+                                procMacro = { enable = true },
                             }
                         },
                         on_attach = function(client, bufnr)
@@ -132,7 +120,7 @@ return {
                             })
                             vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
                         end
-                    }
+                    })
                 end,
 
                 -- ["bacon-ls"] = function()

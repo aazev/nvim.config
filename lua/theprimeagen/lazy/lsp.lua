@@ -31,6 +31,7 @@ return {
             },
         })
         require("mason-lspconfig").setup({
+            automatic_enable = { exclude = { "rust_analyzer" } },
             ensure_installed = {
                 "lua_ls",
                 "ts_ls",
@@ -91,36 +92,6 @@ return {
                             vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
                         end
                     }
-                end,
-
-                ["rust_analyzer"] = function()
-                    local lspconfig = require("lspconfig")
-                    lspconfig.rust_analyzer.setup({
-                        capabilities = capabilities,
-                        settings = {
-                            ["rust-analyzer"] = {
-                                cargo = { loadOutDirsFromCheck = true },
-                                check = { command = "" },
-                                checkOnSave = { enable = false },
-                                diagnostics = { enable = false },
-                                inlay_hints = {
-                                    show_parameter_hints = true,
-                                    parameter_hints_prefix = " » ",
-                                    type_hints = true,
-                                    type_hints_prefix = " » ",
-                                    max_length = 80,
-                                },
-                                procMacro = { enable = true },
-                            }
-                        },
-                        on_attach = function(client, bufnr)
-                            vim.diagnostic.config({
-                                virtual_text = true,
-                                virtual_lines = false,
-                            })
-                            vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
-                        end
-                    })
                 end,
 
                 -- ["bacon-ls"] = function()
@@ -226,6 +197,36 @@ return {
         })
 
         local lspconfig = require("lspconfig")
+
+        -- rust-analyzer
+        lspconfig.rust_analyzer.setup({
+            capabilities = capabilities,
+            cmd = { "/home/aazev/.cargo/bin/rust-analyzer" },
+            settings = {
+                ["rust-analyzer"] = {
+                    cargo = { loadOutDirsFromCheck = true },
+                    checkOnSave = false,
+                    diagnostics = { enable = false },
+                    inlay_hints = {
+                        show_parameter_hints = true,
+                        parameter_hints_prefix = " » ",
+                        type_hints = true,
+                        type_hints_prefix = " » ",
+                        max_length = 80,
+                    },
+                    procMacro = { enable = true },
+                }
+            },
+            on_attach = function(client, bufnr)
+                vim.diagnostic.config({
+                    virtual_text = true,
+                    virtual_lines = false,
+                })
+                vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
+            end
+        })
+
+        -- bacon-ls
         lspconfig.bacon_ls.setup({
             capabilities = capabilities,
             init_options = {
@@ -278,8 +279,9 @@ return {
                 ["<C-Space>"] = cmp.mapping.complete(),
             }),
             sources = cmp.config.sources({
-                { name = 'nvim_lsp' },
-                { name = 'luasnip' }, -- For luasnip users.
+                { name = "copilot",  group_index = 2 },
+                { name = 'nvim_lsp', group_index = 2 },
+                { name = 'luasnip',  group_index = 2 }, -- For luasnip users.
             }, {
                 { name = 'buffer' },
             })

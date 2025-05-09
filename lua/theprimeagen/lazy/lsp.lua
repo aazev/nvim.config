@@ -35,6 +35,7 @@ return {
             ensure_installed = {
                 "lua_ls",
                 "ts_ls",
+                "eslint",
                 "tailwindcss",
                 "intelephense",
                 "phpactor",
@@ -94,22 +95,6 @@ return {
                     }
                 end,
 
-                -- ["bacon-ls"] = function()
-                --     local lspconfig = require("lspconfig")
-                --     lspconfig.bacon_ls.setup {
-                --         capabilities = capabilities,
-                --         init_options = {
-                --             runBaconInBackground = true,
-                --             updateOnSave = true,
-                --             updateOnSaveWaitMilliseconds = 1000,
-                --             updateOnChange = false,
-                --         },
-                --         on_attach = function(client, bufnr)
-                --             vim.lsp.inlay_hint.enable(true)
-                --         end
-                --     }
-                -- end,
-
                 ["ts_ls"] = function()
                     local lspconfig = require("lspconfig")
                     lspconfig.ts_ls.setup {
@@ -131,34 +116,43 @@ return {
                     }
                 end,
 
-                -- ["eslint"] = function()
-                --     local lspconfig = require("lspconfig")
-                --     lspconfig.eslint.setup {
-                --         capabilities = capabilities,
-                --         cmd_env = {
-                --             NODE_OPTIONS = "--max_old_space_size=8192"
-                --         },
-                --         on_attach = function(client, bufnr)
-                --             client.server_capabilities.documentFormattingProvider = true
-                --             vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
-                --         end
-                --     }
-                -- end,
+                ["eslint"] = function()
+                    local lspconfig = require("lspconfig")
+                    lspconfig.eslint.setup {
+                        root_dir = function(fname)
+                            if lspconfig.util.has_file("biome.json", fname) or lspconfig.util.has_file("biome.jsonc", fname) then
+                                return nil
+                            end
+                            return lspconfig.util.root_pattern("package.json", ".eslintrc.js", ".eslintrc.cjs",
+                                    ".eslintrc.json")(fname)
+                                or lspconfig.util.find_git_ancestor(fname)
+                                or vim.loop.cwd()
+                        end,
+                        capabilities = capabilities,
+                        cmd_env = {
+                            NODE_OPTIONS = "--max_old_space_size=8192"
+                        },
+                        on_attach = function(client, bufnr)
+                            client.server_capabilities.documentFormattingProvider = true
+                            vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
+                        end
+                    }
+                end,
 
                 ["biome"] = function()
                     local lspconfig = require("lspconfig")
                     lspconfig.biome.setup {
                         cmd = { "biome", "lsp-proxy" },
                         root_dir = function(fname)
-                            return lspconfig.util.root_pattern("biome.json", "biome.jsonc")(fname)
-                                or lspconfig.util.find_git_ancestor(fname)
-                                or vim.loop.cwd()
+                            if lspconfig.util.has_file("biome.json", fname) or lspconfig.util.has_file("biome.jsonc", fname) then
+                                return lspconfig.util.root_pattern("biome.json", "biome.jsonc")(fname)
+                                    or lspconfig.util.find_git_ancestor(fname)
+                                    or vim.loop.cwd()
+                            end
+                            return nil
                         end,
                         single_file_support = true,
                         capabilities = capabilities,
-                        cmd_env = {
-                            NODE_OPTIONS = "--max_old_space_size=8192"
-                        },
                         filetypes = {
                             "astro",
                             "css",

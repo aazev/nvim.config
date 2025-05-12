@@ -91,22 +91,22 @@ return {
     --         -- ColorMyPencils("tokyonight")
     --     end
     -- },
-    -- {
-    --     "rose-pine/neovim",
-    --     name = "rose-pine",
-    --     config = function()
-    --         require('rose-pine').setup({
-    --             disable_background = true,
-    --             styles = {
-    --                 italic = false,
-    --             },
-    --         })
+    {
+        "rose-pine/neovim",
+        name = "rose-pine",
+        config = function()
+            require('rose-pine').setup({
+                disable_background = true,
+                styles = {
+                    italic = false,
+                },
+            })
 
-    --         vim.cmd("colorscheme rose-pine")
+            vim.cmd("colorscheme rose-pine")
 
-    --         ColorMyPencils()
-    --     end
-    -- },
+            ColorMyPencils()
+        end
+    },
     -- {
     --     "EdenEast/nightfox.nvim",
     --     name = "nightfox",
@@ -195,33 +195,33 @@ return {
     --         -- require("onedarkpro").load("onedark")
     --     end
     -- },
-    {
-        "rebelot/kanagawa.nvim",
-        name = "kanagawa",
-        priority = 1000,
-        config = function()
-            require("kanagawa").setup({
-                compile = false,
-                transparent = true,
-                dimInactive = true,
-                commentStyle = { italic = false },
-                functionStyle = { italic = false },
-                keywordStyle = { italic = false },
-                theme = "dragon",
-                colors = {
-                    theme = {
-                        all = {
-                            ui = {
-                                bg_gutter = "none",
-                            },
-                        },
-                    },
-                },
-            })
+    -- {
+    --     "rebelot/kanagawa.nvim",
+    --     name = "kanagawa",
+    --     priority = 1000,
+    --     config = function()
+    --         require("kanagawa").setup({
+    --             compile = false,
+    --             transparent = true,
+    --             dimInactive = true,
+    --             commentStyle = { italic = false },
+    --             functionStyle = { italic = false },
+    --             keywordStyle = { italic = false },
+    --             theme = "dragon",
+    --             colors = {
+    --                 theme = {
+    --                     all = {
+    --                         ui = {
+    --                             bg_gutter = "none",
+    --                         },
+    --                     },
+    --                 },
+    --             },
+    --         })
 
-            vim.cmd("colorscheme kanagawa-dragon")
+    --         vim.cmd("colorscheme kanagawa-dragon")
 
-            -- ColorMyPencils("kanagawa-dragon")
-        end
-    },
+    --         -- ColorMyPencils("kanagawa-dragon")
+    --     end
+    -- },
 }

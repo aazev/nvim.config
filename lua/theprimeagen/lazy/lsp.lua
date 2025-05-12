@@ -45,12 +45,8 @@ return {
             handlers = {
                 function(server_name) -- default handler (optional)
                     require("lspconfig")[server_name].setup {
-                        capabilities = capabilities
+                        capabilities = capabilities,
                     }
-                    vim.diagnostic.config({
-                        virtual_text = false,
-                        virtual_lines = { current_line = true },
-                    })
                 end,
 
                 ["phpactor"] = function()
@@ -120,12 +116,21 @@ return {
                     local lspconfig = require("lspconfig")
                     lspconfig.eslint.setup {
                         root_dir = function(fname)
-                            if lspconfig.util.has_file("biome.json", fname) or lspconfig.util.has_file("biome.jsonc", fname) then
+                            local util = lspconfig.util
+
+                            local has_biome = util.has_file("biome.json", fname) or util.has_file("biome.jsonc", fname)
+                            local has_eslint = util.has_file(".eslintrc", fname)
+                                or util.has_file(".eslintrc.js", fname)
+                                or util.has_file(".eslintrc.cjs", fname)
+                                or util.has_file(".eslintrc.json", fname)
+
+                            if has_biome or not has_eslint then
                                 return nil
                             end
-                            return lspconfig.util.root_pattern("package.json", ".eslintrc.js", ".eslintrc.cjs",
-                                    ".eslintrc.json")(fname)
-                                or lspconfig.util.find_git_ancestor(fname)
+
+                            return util.root_pattern("package.json", ".eslintrc.js", ".eslintrc.cjs", ".eslintrc.json")(
+                                    fname)
+                                or util.find_git_ancestor(fname)
                                 or vim.loop.cwd()
                         end,
                         capabilities = capabilities,
@@ -144,29 +149,24 @@ return {
                     lspconfig.biome.setup {
                         cmd = { "biome", "lsp-proxy" },
                         root_dir = function(fname)
-                            if lspconfig.util.has_file("biome.json", fname) or lspconfig.util.has_file("biome.jsonc", fname) then
+                            local util = lspconfig.util
+
+                            local has_biome = util.has_file("biome.json", fname) or util.has_file("biome.jsonc", fname)
+                            local has_eslint = util.has_file(".eslintrc", fname)
+                                or util.has_file(".eslintrc.js", fname)
+                                or util.has_file(".eslintrc.cjs", fname)
+                                or util.has_file(".eslintrc.json", fname)
+
+                            if has_biome or not has_eslint then
                                 return lspconfig.util.root_pattern("biome.json", "biome.jsonc")(fname)
                                     or lspconfig.util.find_git_ancestor(fname)
                                     or vim.loop.cwd()
                             end
+
                             return nil
                         end,
                         single_file_support = true,
                         capabilities = capabilities,
-                        filetypes = {
-                            "astro",
-                            "css",
-                            "graphql",
-                            "javascript",
-                            "javascriptreact",
-                            "json",
-                            "jsonc",
-                            "svelte",
-                            "typescript",
-                            "typescript.tsx",
-                            "typescriptreact",
-                            "vue",
-                        },
                         on_attach = function(client, bufnr)
                             vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
                         end
@@ -184,7 +184,14 @@ return {
                                     globals = { "vim", "it", "describe", "before_each", "after_each" },
                                 }
                             }
-                        }
+                        },
+                        on_attach = function(client, bufnr)
+                            vim.diagnostic.config({
+                                virtual_text = false,
+                                virtual_lines = { current_line = true },
+                            }, bufnr)
+                            vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
+                        end
                     }
                 end,
             }
@@ -195,7 +202,7 @@ return {
         -- rust-analyzer
         lspconfig.rust_analyzer.setup({
             capabilities = capabilities,
-            cmd = { "/home/aazev/.cargo/bin/rust-analyzer" },
+            -- cmd = { "/home/aazev/.cargo/bin/rust-analyzer" },
             settings = {
                 ["rust-analyzer"] = {
                     cargo = { loadOutDirsFromCheck = true },
@@ -212,10 +219,6 @@ return {
                 }
             },
             on_attach = function(client, bufnr)
-                vim.diagnostic.config({
-                    virtual_text = true,
-                    virtual_lines = false,
-                })
                 vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
             end
         })
@@ -250,10 +253,6 @@ return {
                     or vim.loop.cwd()
             end,
             on_attach = function(client, bufnr)
-                vim.diagnostic.config({
-                    virtual_text = true,
-                    virtual_lines = false,
-                })
                 vim.lsp.inlay_hint.enable(true)
             end
         })

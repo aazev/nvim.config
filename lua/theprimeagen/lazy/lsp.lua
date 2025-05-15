@@ -91,27 +91,6 @@ return {
                     }
                 end,
 
-                ["ts_ls"] = function()
-                    local lspconfig = require("lspconfig")
-                    lspconfig.ts_ls.setup {
-                        capabilities = capabilities,
-                        cmd_env = {
-                            NODE_OPTIONS = "--max_old_space_size=8192"
-                        },
-                        inlay_hints = {
-                            show_parameter_hints = true,
-                            parameter_hints_prefix = " » ",
-                            type_hints = true,
-                            type_hints_prefix = " » ",
-                            max_length = 80,
-                        },
-                        on_attach = function(client, bufnr)
-                            vim.lsp.inlay_hint.enable(true)
-                            client.server_capabilities.documentFormattingProvider = false
-                        end
-                    }
-                end,
-
                 ["eslint"] = function()
                     local lspconfig = require("lspconfig")
                     lspconfig.eslint.setup {
@@ -256,6 +235,25 @@ return {
                 vim.lsp.inlay_hint.enable(true)
             end
         })
+
+        -- tsserver
+        lspconfig.ts_ls.setup {
+            capabilities = capabilities,
+            cmd_env = {
+                NODE_OPTIONS = "--max_old_space_size=8192"
+            },
+            inlay_hints = {
+                show_parameter_hints = true,
+                parameter_hints_prefix = " » ",
+                type_hints = true,
+                type_hints_prefix = " » ",
+                max_length = 80,
+            },
+            on_attach = function(client, bufnr)
+                vim.lsp.inlay_hint.enable(true)
+                client.server_capabilities.documentFormattingProvider = false
+            end
+        }
 
         local cmp_select = { behavior = cmp.SelectBehavior.Select }
 

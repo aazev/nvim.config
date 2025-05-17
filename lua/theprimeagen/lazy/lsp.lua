@@ -24,164 +24,12 @@ return {
             cmp_lsp.default_capabilities())
 
         require("fidget").setup({})
-        require("mason").setup()
-        require("mason-tool-installer").setup({
-            ensure_installed = {
-                "php-cs-fixer",
-            },
-        })
-        require("mason-lspconfig").setup({
-            automatic_enable = { exclude = { "rust_analyzer" } },
-            ensure_installed = {
-                "lua_ls",
-                "ts_ls",
-                "eslint",
-                "tailwindcss",
-                "intelephense",
-                "phpactor",
-                "biome",
-                "rust_analyzer",
-            },
-            handlers = {
-                function(server_name) -- default handler (optional)
-                    require("lspconfig")[server_name].setup {
-                        capabilities = capabilities,
-                    }
-                end,
-
-                ["phpactor"] = function()
-                    local lspconfig = require("lspconfig")
-                    lspconfig.phpactor.setup {
-                        capabilities = capabilities,
-                        cmd = { "phpactor", "language-server" },
-                        on_attach = function(client, bufnr)
-                            client.server_capabilities.hoverProvider = false
-                            client.server_capabilities.documentSymbolProvider = false
-                            client.server_capabilities.referencesProvider = false
-                            client.server_capabilities.completionProvider = false
-                            client.server_capabilities.documentFormattingProvider = false
-                            client.server_capabilities.definitionProvider = false
-                            client.server_capabilities.implementationProvider = true
-                            client.server_capabilities.typeDefinitionProvider = false
-                            client.server_capabilities.diagnosticProvider = false
-                        end
-                    }
-                end,
-
-                ["intelephense"] = function()
-                    local lspconfig = require("lspconfig")
-                    lspconfig.intelephense.setup {
-                        capabilities = capabilities,
-                        settings = {
-                            php = {
-                                completion = {
-                                    callSnippet = "Replace"
-                                }
-                            },
-                            intelephense = {
-                                files = {
-                                    maxSize = 1000000
-                                }
-                            }
-                        },
-                        cmd = { "intelephense", "--stdio" },
-                        on_attach = function(client, bufnr)
-                            vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
-                        end
-                    }
-                end,
-
-                ["eslint"] = function()
-                    local lspconfig = require("lspconfig")
-                    lspconfig.eslint.setup {
-                        root_dir = function(fname)
-                            local util = lspconfig.util
-
-                            local has_biome = util.has_file("biome.json", fname) or util.has_file("biome.jsonc", fname)
-                            local has_eslint = util.has_file(".eslintrc", fname)
-                                or util.has_file(".eslintrc.js", fname)
-                                or util.has_file(".eslintrc.cjs", fname)
-                                or util.has_file(".eslintrc.json", fname)
-
-                            if has_biome or not has_eslint then
-                                return nil
-                            end
-
-                            return util.root_pattern("package.json", ".eslintrc.js", ".eslintrc.cjs", ".eslintrc.json")(
-                                    fname)
-                                or util.find_git_ancestor(fname)
-                                or vim.loop.cwd()
-                        end,
-                        capabilities = capabilities,
-                        cmd_env = {
-                            NODE_OPTIONS = "--max_old_space_size=8192"
-                        },
-                        on_attach = function(client, bufnr)
-                            client.server_capabilities.documentFormattingProvider = true
-                            vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
-                        end
-                    }
-                end,
-
-                ["biome"] = function()
-                    local lspconfig = require("lspconfig")
-                    lspconfig.biome.setup {
-                        cmd = { "biome", "lsp-proxy" },
-                        root_dir = function(fname)
-                            local util = lspconfig.util
-
-                            local has_biome = util.has_file("biome.json", fname) or util.has_file("biome.jsonc", fname)
-                            local has_eslint = util.has_file(".eslintrc", fname)
-                                or util.has_file(".eslintrc.js", fname)
-                                or util.has_file(".eslintrc.cjs", fname)
-                                or util.has_file(".eslintrc.json", fname)
-
-                            if has_biome or not has_eslint then
-                                return lspconfig.util.root_pattern("biome.json", "biome.jsonc")(fname)
-                                    or lspconfig.util.find_git_ancestor(fname)
-                                    or vim.loop.cwd()
-                            end
-
-                            return nil
-                        end,
-                        single_file_support = true,
-                        capabilities = capabilities,
-                        on_attach = function(client, bufnr)
-                            vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
-                        end
-                    }
-                end,
-
-                ["lua_ls"] = function()
-                    local lspconfig = require("lspconfig")
-                    lspconfig.lua_ls.setup {
-                        capabilities = capabilities,
-                        settings = {
-                            Lua = {
-                                runtime = { version = "Lua 5.1" },
-                                diagnostics = {
-                                    globals = { "vim", "it", "describe", "before_each", "after_each" },
-                                }
-                            }
-                        },
-                        on_attach = function(client, bufnr)
-                            vim.diagnostic.config({
-                                virtual_text = false,
-                                virtual_lines = { current_line = true },
-                            }, bufnr)
-                            vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
-                        end
-                    }
-                end,
-            }
-        })
 
         local lspconfig = require("lspconfig")
 
         -- rust-analyzer
-        lspconfig.rust_analyzer.setup({
+        vim.lsp.config('rust_analyzer', {
             capabilities = capabilities,
-            -- cmd = { "/home/aazev/.cargo/bin/rust-analyzer" },
             settings = {
                 ["rust-analyzer"] = {
                     cargo = { loadOutDirsFromCheck = true },
@@ -195,7 +43,7 @@ return {
                         max_length = 80,
                     },
                     procMacro = { enable = true },
-                }
+                },
             },
             on_attach = function(client, bufnr)
                 vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
@@ -203,7 +51,7 @@ return {
         })
 
         -- bacon-ls
-        lspconfig.bacon_ls.setup({
+        lspconfig.bacon_ls.setup {
             capabilities = capabilities,
             init_options = {
                 runBaconInBackground = true,
@@ -212,19 +60,21 @@ return {
                 updateOnChange = false,
             },
             settings = {
-                cargo_command_args =
-                "clippy --tests --all-targets --message-format json-diagnostic-rendered-ansi",
-                bacon = {
-                    format = {
-                        enable = true,
-                        autoFixOnFormat = true,
-                        autoFixOnSave = true,
-                    },
-                    lint = {
-                        enable = true,
-                        autoFixOnLint = true,
-                    },
-                }
+                ["bacon-ls"] = {
+                    cargo_command_args =
+                    "clippy --tests --all-targets --message-format json-diagnostic-rendered-ansi",
+                    bacon = {
+                        format = {
+                            enable = true,
+                            autoFixOnFormat = true,
+                            autoFixOnSave = true,
+                        },
+                        lint = {
+                            enable = true,
+                            autoFixOnLint = true,
+                        },
+                    }
+                },
             },
             root_dir = function(fname)
                 return lspconfig.util.root_pattern("bacon.toml")(fname)
@@ -234,10 +84,48 @@ return {
             on_attach = function(client, bufnr)
                 vim.lsp.inlay_hint.enable(true)
             end
+        }
+
+        -- phpactor
+        vim.lsp.config('phpactor', {
+            capabilities = capabilities,
+            cmd = { "phpactor", "language-server" },
+            on_attach = function(client, bufnr)
+                client.server_capabilities.hoverProvider = false
+                client.server_capabilities.documentSymbolProvider = false
+                client.server_capabilities.referencesProvider = false
+                client.server_capabilities.completionProvider = false
+                client.server_capabilities.documentFormattingProvider = false
+                client.server_capabilities.definitionProvider = false
+                client.server_capabilities.implementationProvider = true
+                client.server_capabilities.typeDefinitionProvider = false
+                client.server_capabilities.diagnosticProvider = false
+            end
+        })
+
+        -- intelephense
+        vim.lsp.config('intelephense', {
+            capabilities = capabilities,
+            settings = {
+                php = {
+                    completion = {
+                        callSnippet = "Replace"
+                    }
+                },
+                intelephense = {
+                    files = {
+                        maxSize = 1000000
+                    }
+                }
+            },
+            cmd = { "intelephense", "--stdio" },
+            on_attach = function(client, bufnr)
+                vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
+            end
         })
 
         -- tsserver
-        lspconfig.ts_ls.setup {
+        vim.lsp.config('ts_ls', {
             capabilities = capabilities,
             cmd_env = {
                 NODE_OPTIONS = "--max_old_space_size=8192"
@@ -253,7 +141,142 @@ return {
                 vim.lsp.inlay_hint.enable(true)
                 client.server_capabilities.documentFormattingProvider = false
             end
-        }
+        })
+
+        -- eslint
+        vim.lsp.config('eslint', {
+            -- root_dir = function(fname)
+            --     local util = lspconfig.util
+
+            --     local has_biome = util.root_pattern("biome.json", "biome.jsonc")(fname)
+            --     local has_eslint = util.root_pattern(".eslintrc", ".eslintrc.js", ".eslintrc.cjs", ".eslintrc.json")(
+            --         fname)
+
+            --     if has_biome or not has_eslint then
+            --         return nil
+            --     end
+
+            --     return util.root_pattern("package.json", ".eslintrc.js", ".eslintrc.cjs", ".eslintrc.json")(
+            --             fname)
+            --         or util.find_git_ancestor(fname)
+            --         or vim.loop.cwd()
+            -- end,
+            root_dir = function(fname)
+                return lspconfig.util.root_pattern("package.json", ".eslintrc.js", ".eslintrc.cjs", ".eslintrc.json")(
+                        fname)
+                    or lspconfig.util.find_git_ancestor(fname)
+                    or vim.loop.cwd()
+            end,
+            capabilities = capabilities,
+            cmd_env = {
+                NODE_OPTIONS = "--max_old_space_size=8192"
+            },
+            on_attach = function(client, bufnr)
+                client.server_capabilities.documentFormattingProvider = true
+                vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
+            end
+        })
+
+        -- biome
+        lspconfig.biome.setup({
+            cmd = { "biome", "lsp-proxy" },
+            root_dir = function(fname)
+                local util = lspconfig.util
+
+                local has_biome = util.root_pattern("biome.json", "biome.jsonc")(fname)
+                local has_eslint = util.root_pattern(".eslintrc", ".eslintrc.js", ".eslintrc.cjs", ".eslintrc.json")(
+                    fname)
+
+                if has_biome or not has_eslint then
+                    return has_biome
+                        or lspconfig.util.find_git_ancestor(fname)
+                        or vim.loop.cwd()
+                end
+
+                return nil
+            end,
+            single_file_support = true,
+            capabilities = capabilities,
+            on_attach = function(client, bufnr)
+                vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
+            end
+        })
+
+        -- lua_ls
+        vim.lsp.config('lua_ls', {
+            capabilities = capabilities,
+            settings = {
+                Lua = {
+                    runtime = { version = "Lua 5.1" },
+                    diagnostics = {
+                        globals = { "vim", "it", "describe", "before_each", "after_each" },
+                    }
+                }
+            },
+            on_attach = function(client, bufnr)
+                vim.diagnostic.config({
+                    virtual_text = false,
+                    virtual_lines = { current_line = true },
+                }, bufnr)
+                vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
+            end
+        })
+
+        -- tailwindcss
+        vim.lsp.config('tailwindcss', {
+            capabilities = capabilities,
+            root_dir = function(fname)
+                return lspconfig.util.root_pattern("tailwind.config.js", "tailwind.config.ts")(fname)
+                    or lspconfig.util.find_git_ancestor(fname)
+                    or vim.loop.cwd()
+            end,
+            -- only for some filetypes
+            filetypes = {
+                "javascriptreact",
+                "typescriptreact",
+                "html",
+                "css",
+                "scss",
+                "less",
+                "vue",
+                "svelte",
+                "php",
+            },
+            on_attach = function(client, bufnr)
+                client.server_capabilities.documentFormattingProvider = false
+                vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
+            end
+        })
+
+        require("mason").setup()
+        require("mason-tool-installer").setup({
+            ensure_installed = {
+                "php-cs-fixer",
+                "bacon",
+            },
+        })
+        require("mason-lspconfig").setup({
+            ensure_installed = {
+                "lua_ls",
+                "ts_ls",
+                "eslint",
+                "tailwindcss",
+                "intelephense",
+                "phpactor",
+                "biome",
+                "rust_analyzer",
+            },
+            automatic_installation = true,
+            automatic_enable = {
+                "lua_ls",
+                "ts_ls",
+                "eslint",
+                "tailwindcss",
+                "intelephense",
+                "phpactor",
+                "rust_analyzer",
+            }
+        })
 
         local cmp_select = { behavior = cmp.SelectBehavior.Select }
 

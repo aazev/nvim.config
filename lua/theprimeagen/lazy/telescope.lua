@@ -11,7 +11,18 @@ return {
         require('telescope').setup({
             -- defaults = {
             --     borderchars = { "█", " ", "▀", "█", "█", " ", " ", "▀" },
-            -- }
+            -- },
+            pickers = {
+                find_files = {
+                    disable_devicons = true,
+                },
+                git_files = {
+                    disable_devicons = true,
+                },
+                grep_string = {
+                    disable_devicons = true,
+                },
+            },
         })
 
         local builtin = require('telescope.builtin')

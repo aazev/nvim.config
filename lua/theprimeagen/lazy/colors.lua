@@ -8,6 +8,63 @@ function ColorMyPencils(color)
 end
 
 return {
+    {
+        "rose-pine/neovim",
+        name = "rose-pine",
+        config = function()
+            require('rose-pine').setup({
+                disable_background = true,
+                styles = {
+                    italic = false,
+                },
+            })
+
+            vim.cmd("colorscheme rose-pine")
+
+            ColorMyPencils()
+        end
+    },
+    -- {
+    --     "loctvl842/monokai-pro.nvim",
+    --     name = "monokai",
+    --     config = function()
+    --         require('monokai-pro').setup({
+    --             transparent_background = true,
+    --             day_night = {
+    --                 enable = true,
+    --                 day = "pro",
+    --                 night = "spectrum",
+    --             },
+    --             filter = "pro", -- pro, octagon, machine, ristretto, spectrum
+    --             background_clear = {}
+    --         })
+
+    --         vim.cmd("colorscheme monokai-pro")
+
+    --         --ColorMyPencils("monokai")
+    --     end
+    -- },
+    -- {
+    --     "ramojus/mellifluous.nvim",
+    --     name = "mellifluous",
+    --     config = function()
+    --         require("mellifluous").setup({
+    --             colorset = "kanagawa_dragon",
+    --             transparent_background = {
+    --                 enabled = true,
+    --                 cursor_line = false,
+    --             },
+    --             dim_inactive = true,
+    --             styles = {
+    --                 italic = false,
+    --             },
+    --         })
+
+    --         vim.cmd("colorscheme mellifluous")
+
+    --         ColorMyPencils("mellifluous")
+    --     end
+    -- },
     -- {
     --     "Mofiqul/dracula.nvim",
     --     name = "dracula",
@@ -91,22 +148,30 @@ return {
     --         -- ColorMyPencils("tokyonight")
     --     end
     -- },
-    {
-        "rose-pine/neovim",
-        name = "rose-pine",
-        config = function()
-            require('rose-pine').setup({
-                disable_background = true,
-                styles = {
-                    italic = false,
-                },
-            })
+    -- {
+    --     'iruzo/matrix-nvim',
+    --     name = "matrix",
+    --     config = function()
+    --         -- require('matrix').setup({
+    --         --     transparent = true,
+    --         --     term_colors = true,
+    --         --     dim_inactive = true,
+    --         --     styles = {
+    --         --         italic = false,
+    --         --     },
+    --         -- })
+    --         vim.g.matrix_contrast = true
+    --         vim.g.matrix_borders = true
+    --         vim.g.matrix_disable_background = false
+    --         vim.g.matrix_italic = false
 
-            vim.cmd("colorscheme rose-pine")
+    --         require('matrix').set()
 
-            ColorMyPencils()
-        end
-    },
+    --         vim.cmd("colorscheme matrix")
+
+    --         ColorMyPencils("matrix")
+    --     end
+    -- },
     -- {
     --     "EdenEast/nightfox.nvim",
     --     name = "nightfox",
@@ -224,4 +289,31 @@ return {
     --         -- ColorMyPencils("kanagawa-dragon")
     --     end
     -- },
+    -- {
+    --     "drewxs/ash.nvim",
+    --     name = "ash",
+    --     priority = 1000,
+    --     config = function()
+    --         require("ash").setup({
+    --             theme = "ash",
+    --             transparent = true,
+    --             dim_inactive = true,
+    --             highlight_inactive_windows = true,
+    --             highlights = {
+    --                 Comment = { italic = false },
+    --                 Keyword = { italic = false },
+    --                 Function = { italic = false },
+    --                 Gutter = { bg = "none" },
+    --                 StatusLine = { fg = "black" },
+    --             },
+    --             styles = {
+    --                 italic = false,
+    --             },
+    --         })
+
+    --         vim.cmd("colorscheme ash")
+
+    --         ColorMyPencils("ash")
+    --     end
+    -- }
 }

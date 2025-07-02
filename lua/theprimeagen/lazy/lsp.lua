@@ -78,10 +78,11 @@ return {
             },
             root_dir = function(fname)
                 return lspconfig.util.root_pattern("bacon.toml")(fname)
-                    or lspconfig.util.find_git_ancestor(fname)
+                    or vim.fs.dirname(vim.fs.find({ '.git' }, fname, { upward = true })[1])
                     or vim.loop.cwd()
             end,
             on_attach = function(client, bufnr)
+                client.server_capabilities.documentFormattingProvider = false
                 vim.lsp.inlay_hint.enable(true)
             end
         }
@@ -143,6 +144,33 @@ return {
             end
         })
 
+        -- ts_go
+        -- vim.lsp.config('ts_go_ls', {
+        --     capabilities = capabilities,
+        --     cmd = { vim.loop.os_homedir() .. "/dev/typescript-go/built/local/tsgo", "--lsp", "-stdio" },
+        --     filetypes = {
+        --         "javascript",
+        --         "javascriptreact",
+        --         "javascript.jsx",
+        --         "typescript",
+        --         "typescriptreact",
+        --         "typescript.tsx",
+        --     },
+        --     root_markers = { "tsconfig.json", "jsconfig.json", "package.json", ".git" },
+        --     inlay_hints = {
+        --         show_parameter_hints = true,
+        --         parameter_hints_prefix = " » ",
+        --         type_hints = true,
+        --         type_hints_prefix = " » ",
+        --         max_length = 80,
+        --     },
+        --     on_attach = function(client, bufnr)
+        --         vim.lsp.inlay_hint.enable(true)
+        --         client.server_capabilities.documentFormattingProvider = false
+        --     end
+        -- })
+        -- vim.lsp.enable("ts_go_ls")
+
         -- eslint
         vim.lsp.config('eslint', {
             -- root_dir = function(fname)
@@ -158,13 +186,13 @@ return {
 
             --     return util.root_pattern("package.json", ".eslintrc.js", ".eslintrc.cjs", ".eslintrc.json")(
             --             fname)
-            --         or util.find_git_ancestor(fname)
+            --         or vim.fs.dirname(vim.fs.find({ '.git' }, fname, { upward = true })[1])
             --         or vim.loop.cwd()
             -- end,
             root_dir = function(fname)
                 return lspconfig.util.root_pattern("package.json", ".eslintrc.js", ".eslintrc.cjs", ".eslintrc.json")(
                         fname)
-                    or lspconfig.util.find_git_ancestor(fname)
+                    or vim.fs.dirname(vim.fs.find({ '.git' }, fname, { upward = true })[1])
                     or vim.loop.cwd()
             end,
             capabilities = capabilities,
@@ -189,7 +217,7 @@ return {
 
                 if has_biome or not has_eslint then
                     return has_biome
-                        or lspconfig.util.find_git_ancestor(fname)
+                        or vim.fs.dirname(vim.fs.find({ '.git' }, fname, { upward = true })[1])
                         or vim.loop.cwd()
                 end
 
@@ -225,11 +253,18 @@ return {
         -- tailwindcss
         vim.lsp.config('tailwindcss', {
             capabilities = capabilities,
-            root_dir = function(fname)
-                return lspconfig.util.root_pattern("tailwind.config.js", "tailwind.config.ts")(fname)
-                    or lspconfig.util.find_git_ancestor(fname)
-                    or vim.loop.cwd()
-            end,
+            root_pattern = {
+                "tailwind.config.js",
+                "tailwind.config.ts",
+                "postcss.config.js",
+                "postcss.config.ts",
+                "package.json",
+            },
+            -- root_dir = function(fname)
+            --     return lspconfig.util.root_pattern("tailwind.config.js", "tailwind.config.ts")(fname)
+            --         or vim.fs.dirname(vim.fs.find({ '.git' }, fname, { upward = true })[1])
+            --         or vim.loop.cwd()
+            -- end,
             -- only for some filetypes
             filetypes = {
                 "javascriptreact",
@@ -263,13 +298,14 @@ return {
                 "tailwindcss",
                 "intelephense",
                 "phpactor",
-                "biome",
+                "biome@1.9.4",
                 "rust_analyzer",
             },
             automatic_installation = true,
             automatic_enable = {
                 "lua_ls",
                 "ts_ls",
+                -- "ts_go_ls",
                 "eslint",
                 "tailwindcss",
                 "intelephense",

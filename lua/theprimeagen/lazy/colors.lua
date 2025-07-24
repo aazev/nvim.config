@@ -8,42 +8,62 @@ function ColorMyPencils(color)
 end
 
 return {
-    {
-        "rose-pine/neovim",
-        name = "rose-pine",
-        config = function()
-            require('rose-pine').setup({
-                disable_background = true,
-                styles = {
-                    italic = false,
-                },
-            })
-
-            vim.cmd("colorscheme rose-pine")
-
-            ColorMyPencils()
-        end
-    },
     -- {
-    --     "loctvl842/monokai-pro.nvim",
-    --     name = "monokai",
+    --     "rose-pine/neovim",
+    --     name = "rose-pine",
     --     config = function()
-    --         require('monokai-pro').setup({
-    --             transparent_background = true,
-    --             day_night = {
-    --                 enable = true,
-    --                 day = "pro",
-    --                 night = "spectrum",
+    --         require('rose-pine').setup({
+    --             disable_background = true,
+    --             styles = {
+    --                 italic = false,
     --             },
-    --             filter = "pro", -- pro, octagon, machine, ristretto, spectrum
-    --             background_clear = {}
     --         })
 
-    --         vim.cmd("colorscheme monokai-pro")
+    --         vim.cmd("colorscheme rose-pine")
 
-    --         --ColorMyPencils("monokai")
+    --         ColorMyPencils()
     --     end
     -- },
+    {
+        "loctvl842/monokai-pro.nvim",
+        name = "monokai",
+        config = function()
+            require('monokai-pro').setup({
+                terminal_colors = true,
+                day_night = {
+                    enable = true,
+                    day = "pro",
+                    night = "spectrum",
+                },
+                filter = "pro", -- pro, octagon, machine, ristretto, spectrum
+                background_clear = {
+                    "fugitive"
+                },
+                override = function(c) -- c.base.* holds Monokai’s palette
+                    return {
+                        Normal                   = { bg = "none" },
+
+                        LineNr                   = { bg = "none" }, -- <–– make active line‑numbers clear
+                        SignColumn               = { bg = "none" }, -- <–– make active line‑numbers clear
+
+                        -- all non‑selected buffers
+                        BufferLineBackground     = { fg = c.base.dimmed3, bg = c.base.background },
+                        BufferLineBufferVisible  = { fg = c.base.dimmed3, bg = c.base.background },
+                        -- the active buffer
+                        BufferLineBufferSelected = { fg = c.base.text, bg = c.base.dimmed1 },
+                        -- filler at the end
+                        BufferLineFill           = { bg = c.base.background },
+                        -- dim inactive windows too
+                        NormalNC                 = { fg = c.base.dimmed4, blend = 20 },
+                    }
+                end
+            })
+
+            vim.cmd("colorscheme monokai-pro")
+
+            --ColorMyPencils("monokai")
+        end
+    },
     -- {
     --     "ramojus/mellifluous.nvim",
     --     name = "mellifluous",

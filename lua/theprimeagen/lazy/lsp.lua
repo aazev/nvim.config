@@ -173,27 +173,18 @@ return {
 
         -- eslint
         vim.lsp.config('eslint', {
-            -- root_dir = function(fname)
-            --     local util = lspconfig.util
-
-            --     local has_biome = util.root_pattern("biome.json", "biome.jsonc")(fname)
-            --     local has_eslint = util.root_pattern(".eslintrc", ".eslintrc.js", ".eslintrc.cjs", ".eslintrc.json")(
-            --         fname)
-
-            --     if has_biome or not has_eslint then
-            --         return nil
-            --     end
-
-            --     return util.root_pattern("package.json", ".eslintrc.js", ".eslintrc.cjs", ".eslintrc.json")(
-            --             fname)
-            --         or vim.fs.dirname(vim.fs.find({ '.git' }, fname, { upward = true })[1])
-            --         or vim.loop.cwd()
-            -- end,
             root_dir = function(fname)
-                return lspconfig.util.root_pattern("package.json", ".eslintrc.js", ".eslintrc.cjs", ".eslintrc.json")(
-                        fname)
-                    or vim.fs.dirname(vim.fs.find({ '.git' }, fname, { upward = true })[1])
-                    or vim.loop.cwd()
+                local util = lspconfig.util
+
+                local has_biome = util.root_pattern("biome.json", "biome.jsonc")(fname)
+                local has_eslint = util.root_pattern(".eslintrc", ".eslintrc.js", ".eslintrc.cjs", ".eslintrc.json")(
+                    fname)
+
+                if not has_biome and has_eslint then
+                    return has_eslint
+                        or vim.fs.dirname(vim.fs.find({ '.git' }, fname, { upward = true })[1])
+                        or vim.loop.cwd()
+                end
             end,
             capabilities = capabilities,
             cmd_env = {

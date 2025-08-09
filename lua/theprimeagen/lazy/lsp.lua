@@ -126,37 +126,11 @@ return {
         })
 
         -- tsserver
-        vim.lsp.config('ts_ls', {
-            capabilities = capabilities,
-            cmd_env = {
-                NODE_OPTIONS = "--max_old_space_size=8192"
-            },
-            inlay_hints = {
-                show_parameter_hints = true,
-                parameter_hints_prefix = " » ",
-                type_hints = true,
-                type_hints_prefix = " » ",
-                max_length = 80,
-            },
-            on_attach = function(client, bufnr)
-                vim.lsp.inlay_hint.enable(true)
-                client.server_capabilities.documentFormattingProvider = false
-            end
-        })
-
-        -- ts_go
-        -- vim.lsp.config('ts_go_ls', {
+        -- vim.lsp.config('ts_ls', {
         --     capabilities = capabilities,
-        --     cmd = { vim.loop.os_homedir() .. "/dev/typescript-go/built/local/tsgo", "--lsp", "-stdio" },
-        --     filetypes = {
-        --         "javascript",
-        --         "javascriptreact",
-        --         "javascript.jsx",
-        --         "typescript",
-        --         "typescriptreact",
-        --         "typescript.tsx",
+        --     cmd_env = {
+        --         NODE_OPTIONS = "--max_old_space_size=8192"
         --     },
-        --     root_markers = { "tsconfig.json", "jsconfig.json", "package.json", ".git" },
         --     inlay_hints = {
         --         show_parameter_hints = true,
         --         parameter_hints_prefix = " » ",
@@ -169,7 +143,33 @@ return {
         --         client.server_capabilities.documentFormattingProvider = false
         --     end
         -- })
-        -- vim.lsp.enable("ts_go_ls")
+
+        -- ts_go
+        vim.lsp.config('ts_go_ls', {
+            capabilities = capabilities,
+            cmd = { vim.loop.os_homedir() .. "/dev/typescript-go/built/local/tsgo", "--lsp", "-stdio" },
+            filetypes = {
+                "javascript",
+                "javascriptreact",
+                "javascript.jsx",
+                "typescript",
+                "typescriptreact",
+                "typescript.tsx",
+            },
+            root_markers = { "tsconfig.json", "jsconfig.json", "package.json", ".git" },
+            inlay_hints = {
+                show_parameter_hints = true,
+                parameter_hints_prefix = " » ",
+                type_hints = true,
+                type_hints_prefix = " » ",
+                max_length = 80,
+            },
+            on_attach = function(client, bufnr)
+                vim.lsp.inlay_hint.enable(true)
+                client.server_capabilities.documentFormattingProvider = false
+            end
+        })
+        vim.lsp.enable("ts_go_ls")
 
         -- eslint
         vim.lsp.config('eslint', {
@@ -295,8 +295,8 @@ return {
             automatic_installation = true,
             automatic_enable = {
                 "lua_ls",
-                "ts_ls",
-                -- "ts_go_ls",
+                -- "ts_ls",
+                "ts_go_ls",
                 "eslint",
                 "tailwindcss",
                 "intelephense",

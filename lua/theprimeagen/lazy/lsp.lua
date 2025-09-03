@@ -45,7 +45,7 @@ return {
                     procMacro = { enable = true },
                 },
             },
-            on_attach = function(client, bufnr)
+            on_attach = function()
                 vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
             end
         })
@@ -81,7 +81,7 @@ return {
                     or vim.fs.dirname(vim.fs.find({ '.git' }, fname, { upward = true })[1])
                     or vim.loop.cwd()
             end,
-            on_attach = function(client, bufnr)
+            on_attach = function(client)
                 client.server_capabilities.documentFormattingProvider = false
                 vim.lsp.inlay_hint.enable(true)
             end
@@ -91,7 +91,7 @@ return {
         vim.lsp.config('phpactor', {
             capabilities = capabilities,
             cmd = { "phpactor", "language-server" },
-            on_attach = function(client, bufnr)
+            on_attach = function(client)
                 client.server_capabilities.hoverProvider = false
                 client.server_capabilities.documentSymbolProvider = false
                 client.server_capabilities.referencesProvider = false
@@ -120,43 +120,17 @@ return {
                 }
             },
             cmd = { "intelephense", "--stdio" },
-            on_attach = function(client, bufnr)
+            on_attach = function()
                 vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
             end
         })
 
         -- tsserver
-        -- vim.lsp.config('ts_ls', {
-        --     capabilities = capabilities,
-        --     cmd_env = {
-        --         NODE_OPTIONS = "--max_old_space_size=8192"
-        --     },
-        --     inlay_hints = {
-        --         show_parameter_hints = true,
-        --         parameter_hints_prefix = " » ",
-        --         type_hints = true,
-        --         type_hints_prefix = " » ",
-        --         max_length = 80,
-        --     },
-        --     on_attach = function(client, bufnr)
-        --         vim.lsp.inlay_hint.enable(true)
-        --         client.server_capabilities.documentFormattingProvider = false
-        --     end
-        -- })
-
-        -- ts_go
-        vim.lsp.config('ts_go_ls', {
+        vim.lsp.config('ts_ls', {
             capabilities = capabilities,
-            cmd = { vim.loop.os_homedir() .. "/dev/typescript-go/built/local/tsgo", "--lsp", "-stdio" },
-            filetypes = {
-                "javascript",
-                "javascriptreact",
-                "javascript.jsx",
-                "typescript",
-                "typescriptreact",
-                "typescript.tsx",
+            cmd_env = {
+                NODE_OPTIONS = "--max_old_space_size=8192"
             },
-            root_markers = { "tsconfig.json", "jsconfig.json", "package.json", ".git" },
             inlay_hints = {
                 show_parameter_hints = true,
                 parameter_hints_prefix = " » ",
@@ -164,12 +138,38 @@ return {
                 type_hints_prefix = " » ",
                 max_length = 80,
             },
-            on_attach = function(client, bufnr)
+            on_attach = function(client)
                 vim.lsp.inlay_hint.enable(true)
                 client.server_capabilities.documentFormattingProvider = false
             end
         })
-        vim.lsp.enable("ts_go_ls")
+
+        -- ts_go
+        -- vim.lsp.config('ts_go_ls', {
+        --     capabilities = capabilities,
+        --     cmd = { vim.loop.os_homedir() .. "/dev/typescript-go/built/local/tsgo", "--lsp", "-stdio" },
+        --     filetypes = {
+        --         "javascript",
+        --         "javascriptreact",
+        --         "javascript.jsx",
+        --         "typescript",
+        --         "typescriptreact",
+        --         "typescript.tsx",
+        --     },
+        --     root_markers = { "tsconfig.json", "jsconfig.json", "package.json", ".git" },
+        --     inlay_hints = {
+        --         show_parameter_hints = true,
+        --         parameter_hints_prefix = " » ",
+        --         type_hints = true,
+        --         type_hints_prefix = " » ",
+        --         max_length = 80,
+        --     },
+        --     on_attach = function(client)
+        --         vim.lsp.inlay_hint.enable(true)
+        --         client.server_capabilities.documentFormattingProvider = false
+        --     end
+        -- })
+        -- vim.lsp.enable("ts_go_ls")
 
         -- eslint
         vim.lsp.config('eslint', {
@@ -190,7 +190,7 @@ return {
             cmd_env = {
                 NODE_OPTIONS = "--max_old_space_size=8192"
             },
-            on_attach = function(client, bufnr)
+            on_attach = function(client)
                 client.server_capabilities.documentFormattingProvider = true
                 vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
             end
@@ -216,7 +216,7 @@ return {
             end,
             single_file_support = true,
             capabilities = capabilities,
-            on_attach = function(client, bufnr)
+            on_attach = function()
                 vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
             end
         })
@@ -232,7 +232,7 @@ return {
                     }
                 }
             },
-            on_attach = function(client, bufnr)
+            on_attach = function(_, bufnr)
                 vim.diagnostic.config({
                     virtual_text = false,
                     virtual_lines = { current_line = true },
@@ -268,7 +268,7 @@ return {
                 "svelte",
                 "php",
             },
-            on_attach = function(client, bufnr)
+            on_attach = function(client)
                 client.server_capabilities.documentFormattingProvider = false
                 vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
             end
@@ -295,8 +295,8 @@ return {
             automatic_installation = true,
             automatic_enable = {
                 "lua_ls",
-                -- "ts_ls",
-                "ts_go_ls",
+                "ts_ls",
+                -- "ts_go_ls",
                 "eslint",
                 "tailwindcss",
                 "intelephense",

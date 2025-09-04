@@ -288,7 +288,7 @@ return {
                 "eslint",
                 "tailwindcss",
                 "intelephense",
-                -- "phpactor",
+                "phpactor",
                 "biome@1.9.4",
                 "rust_analyzer",
             },

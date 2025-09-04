@@ -288,7 +288,7 @@ return {
                 "eslint",
                 "tailwindcss",
                 "intelephense",
-                "phpactor",
+                -- "phpactor",
                 "biome@1.9.4",
                 "rust_analyzer",
             },
@@ -322,6 +322,7 @@ return {
             sources = cmp.config.sources({
                 { name = "copilot",  group_index = 2 },
                 { name = 'nvim_lsp', group_index = 2 },
+                { name = 'laravel',  group_index = 3 },
                 { name = 'luasnip',  group_index = 2 }, -- For luasnip users.
             }, {
                 { name = 'buffer' },

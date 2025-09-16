@@ -24,6 +24,7 @@ return {
             ensure_installed = {
                 "php-cs-fixer",
                 "jsonlint",
+                "blade-formatter"
             },
         })
         local conform = require("conform")
@@ -73,10 +74,14 @@ return {
                     args = { "--compact", "$FILENAME" },
                     stdin = false,
                 },
+                ["blade-formatter"] = {
+                    prepend_args = { "--wrap-line-length", 240, "--wrap-attributes-min-attrs", 1, "--sort-tailwindcss-classes", true }
+                },
             },
             formatters_by_ft = {
                 php = { "php-cs-fixer" },
                 json = { "jsonlint" },
+                blade = { "blade-formatter" }
             },
             format_after_save = {
                 timeout = 500,

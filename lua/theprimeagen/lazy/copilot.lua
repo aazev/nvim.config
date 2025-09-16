@@ -8,8 +8,14 @@ return {
         build = ":Copilot auth",
         config = function()
             require("copilot").setup({
-                suggestion = { enabled = false },
-                panel = { enabled = false },
+                suggestion = {
+                    enabled = false,
+                    debounce = 75,
+                },
+                panel = {
+                    enabled = true,
+                    auto_refresh = true,
+                },
             })
         end,
     },

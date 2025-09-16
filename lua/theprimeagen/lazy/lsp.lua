@@ -101,25 +101,39 @@ return {
                 client.server_capabilities.implementationProvider = true
                 client.server_capabilities.typeDefinitionProvider = false
                 client.server_capabilities.diagnosticProvider = false
-            end
+            end,
+            root_dir = function(fname)
+                local php_version = vim.fn.system("php -r 'echo PHP_VERSION;'")
+                if vim.v.shell_error ~= 0 then
+                    return nil
+                end
+                local major, minor = php_version:match("^(%d+)%.(%d+)")
+                major = tonumber(major)
+                minor = tonumber(minor)
+                if major < 8 then
+                    return nil
+                else
+                    return lspconfig.util.root_pattern("composer.json", "vendor/autoload.php")(fname)
+                        or vim.fs.dirname(vim.fs.find({ '.git' }, fname, { upward = true })[1])
+                        or vim.loop.cwd()
+                end
+            end,
         })
 
         -- intelephense
         vim.lsp.config('intelephense', {
             capabilities = capabilities,
             settings = {
-                php = {
-                    completion = {
-                        callSnippet = "Replace"
-                    }
-                },
                 intelephense = {
                     files = {
                         maxSize = 1000000
                     }
                 }
             },
-            cmd = { "intelephense", "--stdio" },
+            -- cmd = { "intelephense", "--stdio" },
+            init_options = {
+                licenceKey = "/home/aazev/intelephense/license.txt",
+            },
             on_attach = function()
                 vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
             end

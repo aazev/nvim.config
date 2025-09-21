@@ -50,8 +50,7 @@ return {
             end
         })
 
-        -- bacon-ls
-        lspconfig.bacon_ls.setup {
+        vim.lsp.config('bacon_ls', {
             capabilities = capabilities,
             init_options = {
                 runBaconInBackground = true,
@@ -60,7 +59,7 @@ return {
                 updateOnChange = false,
             },
             settings = {
-                ["bacon-ls"] = {
+                ['bacon-ls'] = {
                     cargo_command_args =
                     "clippy --tests --all-targets --message-format json-diagnostic-rendered-ansi",
                     bacon = {
@@ -76,16 +75,20 @@ return {
                     }
                 },
             },
-            root_dir = function(fname)
-                return lspconfig.util.root_pattern("bacon.toml")(fname)
-                    or vim.fs.dirname(vim.fs.find({ '.git' }, fname, { upward = true })[1])
-                    or vim.loop.cwd()
+            root_markers = { "bacon.toml", "Cargo.toml", ".git" },
+            root_dir = function(bufnr, on_dir)
+                local project_root = vim.fs.root(bufnr, { { "bacon.toml", "Cargo.toml" }, ".git" })
+                if project_root then
+                    return on_dir(project_root)
+                end
             end,
-            on_attach = function(client)
+            on_attach = function(client, bufnr)
                 client.server_capabilities.documentFormattingProvider = false
-                vim.lsp.inlay_hint.enable(true)
+                if vim.lsp.inlay_hint then
+                    pcall(vim.lsp.inlay_hint.enable, true, { bufnr = bufnr })
+                end
             end
-        }
+        })
 
         -- phpactor
         vim.lsp.config('phpactor', {
@@ -187,18 +190,16 @@ return {
 
         -- eslint
         vim.lsp.config('eslint', {
-            root_dir = function(fname)
-                local util = lspconfig.util
-
-                local has_biome = util.root_pattern("biome.json", "biome.jsonc")(fname)
-                local has_eslint = util.root_pattern(".eslintrc", ".eslintrc.js", ".eslintrc.cjs", ".eslintrc.json")(
-                    fname)
+            root_dir = function(bufnr, on_dir)
+                local has_biome = vim.fs.root(bufnr, { "biome.json", "biome.jsonc" })
+                local has_eslint = vim.fs.root(bufnr, { ".eslintrc", ".eslintrc.js", ".eslintrc.cjs", ".eslintrc.json" })
 
                 if not has_biome and has_eslint then
-                    return has_eslint
-                        or vim.fs.dirname(vim.fs.find({ '.git' }, fname, { upward = true })[1])
-                        or vim.loop.cwd()
+                    return on_dir(has_eslint)
+                        or on_dir(vim.fs.root(bufnr, { ".git" }))
+                        or on_dir(vim.loop.cwd())
                 end
+                return nil
             end,
             capabilities = capabilities,
             cmd_env = {
@@ -211,21 +212,16 @@ return {
         })
 
         -- biome
-        lspconfig.biome.setup({
+        vim.lsp.config("biome", {
             cmd = { "biome", "lsp-proxy" },
-            root_dir = function(fname)
-                local util = lspconfig.util
-
-                local has_biome = util.root_pattern("biome.json", "biome.jsonc")(fname)
-                local has_eslint = util.root_pattern(".eslintrc", ".eslintrc.js", ".eslintrc.cjs", ".eslintrc.json")(
-                    fname)
-
+            root_dir = function(bufnr, on_dir)
+                local has_biome = vim.fs.root(bufnr, { "biome.json", "biome.jsonc" })
+                local has_eslint = vim.fs.root(bufnr, { ".eslintrc", ".eslintrc.js", ".eslintrc.cjs", ".eslintrc.json" })
                 if has_biome or not has_eslint then
-                    return has_biome
-                        or vim.fs.dirname(vim.fs.find({ '.git' }, fname, { upward = true })[1])
-                        or vim.loop.cwd()
+                    return on_dir(has_biome)
+                        or on_dir(vim.fs.root(bufnr, { ".git" }))
+                        or on_dir(vim.loop.cwd())
                 end
-
                 return nil
             end,
             single_file_support = true,
@@ -234,6 +230,7 @@ return {
                 vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
             end
         })
+        vim.lsp.enable("biome")
 
         -- lua_ls
         vim.lsp.config('lua_ls', {
@@ -303,7 +300,7 @@ return {
                 "tailwindcss",
                 "intelephense",
                 "phpactor",
-                "biome@1.9.4",
+                "biome",
                 "rust_analyzer",
             },
             automatic_installation = true,
@@ -316,6 +313,7 @@ return {
                 "intelephense",
                 "phpactor",
                 "rust_analyzer",
+                "bacon_ls",
             }
         })
 

@@ -82,12 +82,12 @@ return {
             major = tonumber(major)
             minor = tonumber(minor)
             if major < 8 then
-                vim.notify("Laravel.nvim requires PHP 8.0 or higher. Detected version: " .. php_version,
-                    vim.log.levels.WARN)
+                -- vim.notify("Laravel.nvim requires PHP 8.0 or higher. Detected version: " .. php_version,
+                --     vim.log.levels.WARN)
                 return false
             end
         else
-            vim.notify("PHP is not installed or not found in PATH. Laravel.nvim will be disabled")
+            -- vim.notify("PHP is not installed or not found in PATH. Laravel.nvim will be disabled")
             return false
         end
 

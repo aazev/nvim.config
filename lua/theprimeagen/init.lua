@@ -39,28 +39,28 @@ autocmd('LspAttach', {
     group = ThePrimeagenGroup,
     callback = function(e)
         local client = vim.lsp.get_client_by_id(e.data.client_id)
-        local ns     = vim.lsp.diagnostic.get_namespace(e.data.client_id)
+        -- local ns     = vim.lsp.diagnostic.get_namespace(e.data.client_id)
 
-        vim.diagnostic.config({
-            virtual_text = true,
-            virtual_lines = false
-        })
+        -- vim.diagnostic.config({
+        --     virtual_text = true,
+        --     virtual_lines = false
+        -- })
 
         if client.name == "copilot" then
             return
         end
 
-        if client.name == "rust_analyzer" or client.name == "bacon" or client.name == "bacon-ls" or client.name == "bacon_ls" then
-            vim.diagnostic.config({
-                virtual_text = true,
-                virtual_lines = false
-            }, ns)
-        elseif client.name then
-            vim.diagnostic.config({
-                virtual_text = false,
-                virtual_lines = { current_line = true },
-            }, ns)
-        end
+        -- if client.name == "rust_analyzer" then
+        --     vim.diagnostic.config({
+        --         virtual_text = true,
+        --         virtual_lines = false
+        --     }, ns)
+        -- elseif client.name then
+        --     vim.diagnostic.config({
+        --         virtual_text = false,
+        --         virtual_lines = { current_line = true },
+        --     }, ns)
+        -- end
 
         local opts = { buffer = e.buf }
         vim.keymap.set("n", "gD", function() vim.lsp.buf.declaration() end, opts)

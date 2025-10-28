@@ -85,7 +85,7 @@ return {
             on_attach = function(client, bufnr)
                 client.server_capabilities.documentFormattingProvider = false
                 if vim.lsp.inlay_hint then
-                    pcall(vim.lsp.inlay_hint.enable, true, { bufnr = bufnr })
+                    pcall(vim.lsp.inlay_hint.enable, true, { bufnr })
                 end
             end
         })
@@ -285,6 +285,11 @@ return {
             end
         })
 
+        --postgres_lsp
+        vim.lsp.config('postgres_lsp', {
+            capabilities = capabilities,
+        })
+
         require("mason").setup()
         require("mason-tool-installer").setup({
             ensure_installed = {
@@ -302,6 +307,8 @@ return {
                 "phpactor",
                 "biome",
                 "rust_analyzer",
+                "postgres_lsp",
+                "bacon_ls",
             },
             automatic_installation = true,
             automatic_enable = {
@@ -314,6 +321,7 @@ return {
                 "phpactor",
                 "rust_analyzer",
                 "bacon_ls",
+                "postgres_lsp",
             }
         })
 

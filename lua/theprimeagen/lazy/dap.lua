@@ -52,6 +52,7 @@ return {
             { "<leader>ds", function() require("dap").session() end,                                              desc = "Session" },
             { "<leader>dt", function() require("dap").terminate() end,                                            desc = "Terminate" },
             { "<leader>dw", function() require("dap.ui.widgets").hover() end,                                     desc = "Widgets" },
+            { "<leader>dQ", function() require("dapui").close() end,                                              desc = "Close all UI" },
         },
         dependencies = {
             {
@@ -68,6 +69,7 @@ return {
                     require("mason-nvim-dap").setup({
                         ensure_installed = {
                             "codelldb",
+                            "php",
                         },
                     })
                 end,
@@ -78,19 +80,24 @@ return {
 
             local dap, dapui = require("dap"), require("dapui")
 
+            dap.adapters.php = {
+                type = 'executable',
+                command = 'php-debug-adapter', -- Adjust as needed, must be in PATH
+                args = {}
+            }
             dap.configurations.php = {
                 {
                     type = "php",
                     request = "launch",
                     name = "Listen for Xdebug",
-                    port = pick_port(9003),
+                    port = 9003,
                     stopOnEntry = false,
-                    pathMappings = {
-                        {
-                            localRoot = "${workspaceFolder}",
-                            remoteRoot = "${workspaceFolder}",
-                        },
-                    },
+                    log = true,
+                    xdebugSettings = {
+                        max_children = 128,
+                        max_data = 1024,
+                        show_hidden = 1,
+                    }
                 },
             }
 
@@ -159,6 +166,9 @@ return {
                 dapui.close()
             end
             dap.listeners.before.event_exited["dapui_config"] = function()
+                dapui.close()
+            end
+            dap.listeners.before.disconnect["dapui_config"] = function()
                 dapui.close()
             end
         end,

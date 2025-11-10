@@ -47,10 +47,10 @@ vim.keymap.set(
     "oif err != nil {<CR>}<Esc>Oreturn err<Esc>"
 )
 
-vim.keymap.set("n", "<leader>vpp", "<cmd>e ~/.dotfiles/nvim/.config/nvim/lua/theprimeagen/packer.lua<CR>");
-vim.keymap.set("n", "<leader>mr", "<cmd>CellularAutomaton make_it_rain<CR>");
+-- vim.keymap.set("n", "<leader>vpp", "<cmd>e ~/.dotfiles/nvim/.config/nvim/lua/theprimeagen/packer.lua<CR>");
+-- vim.keymap.set("n", "<leader>mr", "<cmd>CellularAutomaton make_it_rain<CR>");
 
-vim.keymap.set({ "n", "v", "i" }, "<C-s>c", "<cmd>Copilot panel toggle<CR>");
+vim.keymap.set({ "n", "v" }, "<C-s>c", "<cmd>Copilot panel toggle<CR>");
 
 vim.keymap.set("n", "<leader><leader>", function()
     vim.cmd("so")
@@ -62,9 +62,10 @@ vim.keymap.set("n", "<leader>ed", function()
 end)
 
 vim.keymap.set("n", "<leader>oi", function()
-    vim.lsp.buf.execute_command({
-        command = "_typescript.organizeImports",
-        arguments = { vim.api.nvim_buf_get_name(0) },
-        title = ""
+    vim.lsp.buf.code_action({
+        context = {
+            only = { "source.organizeImports" },
+        },
+        apply = true,
     })
 end, { desc = "Organize Imports" })

@@ -49,11 +49,11 @@ return {
                 vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
             end
         })
+        vim.lsp.enable("rust_analyzer")
 
         vim.lsp.config('bacon_ls', {
             capabilities = capabilities,
             init_options = {
-                runBaconInBackground = true,
                 updateOnSave = true,
                 updateOnSaveWaitMilliseconds = 1000,
                 updateOnChange = false,
@@ -75,19 +75,6 @@ return {
                     }
                 },
             },
-            root_markers = { "bacon.toml", "Cargo.toml", ".git" },
-            root_dir = function(bufnr, on_dir)
-                local project_root = vim.fs.root(bufnr, { { "bacon.toml", "Cargo.toml" }, ".git" })
-                if project_root then
-                    return on_dir(project_root)
-                end
-            end,
-            on_attach = function(client, bufnr)
-                client.server_capabilities.documentFormattingProvider = false
-                if vim.lsp.inlay_hint then
-                    pcall(vim.lsp.inlay_hint.enable, true, { bufnr })
-                end
-            end
         })
 
         -- phpactor
@@ -306,7 +293,7 @@ return {
                 "intelephense",
                 "phpactor",
                 "biome",
-                "rust_analyzer",
+                -- "rust_analyzer",
                 "postgres_lsp",
                 "bacon_ls",
             },
@@ -319,7 +306,7 @@ return {
                 "tailwindcss",
                 "intelephense",
                 "phpactor",
-                "rust_analyzer",
+                -- "rust_analyzer",
                 "bacon_ls",
                 "postgres_lsp",
             }

@@ -41,6 +41,10 @@ vim.keymap.set("n", "<leader>j", "<cmd>lprev<CR>zz")
 vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
 vim.keymap.set("n", "<leader>x", "<cmd>!chmod +x %<CR>", { silent = true })
 
+vim.keymap.set("n", "<leader>ti", function()
+    vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({0}), {0})
+end, { desc = "[T]oggle [I]nlay Hints" })
+
 vim.keymap.set(
     "n",
     "<leader>ee",
@@ -49,8 +53,6 @@ vim.keymap.set(
 
 -- vim.keymap.set("n", "<leader>vpp", "<cmd>e ~/.dotfiles/nvim/.config/nvim/lua/theprimeagen/packer.lua<CR>");
 -- vim.keymap.set("n", "<leader>mr", "<cmd>CellularAutomaton make_it_rain<CR>");
-
-vim.keymap.set({ "n", "v" }, "<C-s>c", "<cmd>Copilot panel toggle<CR>");
 
 vim.keymap.set("n", "<leader><leader>", function()
     vim.cmd("so")

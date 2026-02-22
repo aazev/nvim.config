@@ -50,7 +50,7 @@ return {
                         if has_cfg then
                             return {
                                 command = "php-cs-fixer",
-                                args    = { "fix", "--config=" + config_file, "$FILENAME" },
+                                args    = { "fix", "--config=" .. config_file, "$FILENAME" },
                                 stdin   = false,
                             }
                         else
@@ -76,7 +76,7 @@ return {
                     }
                 },
                 format_after_save = {
-                    timeout = 500,
+                    timeout = 2500,
                     lsp_fallback = true,
                     async = true,
                 },

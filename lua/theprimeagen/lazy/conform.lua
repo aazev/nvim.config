@@ -61,18 +61,21 @@ return {
                             }
                         end
                     end,
-                    ["jsonlint"] = {
-                        command = "jsonlint",
-                        args = { "--compact", "$FILENAME" },
-                        stdin = false,
-                    },
                 },
                 formatters_by_ft = {
                     php = { "php-cs-fixer" },
-                    json = { "jsonlint" },
+                    json = { "biome" },
+                    jsonc = { "biome" },
                     blade = {
                         "blade-formatter",
-                        prepend_args = { "--wrap-line-length", 240, "--wrap-attributes-min-attrs", 1, "--sort-tailwindcss-classes", true }
+                        prepend_args = {
+                            "--wrap-line-length",
+                            240,
+                            "--wrap-attributes-min-attrs",
+                            1,
+                            "--sort-tailwindcss-classes",
+                            true
+                        }
                     }
                 },
                 format_after_save = {
@@ -92,13 +95,17 @@ return {
         end,
     },
     {
-        "zapling/mason-conform.nvim",
+        "zknx/mason-conform.nvim",
         dependencies = {
             "williamboman/mason.nvim",
             "stevearc/conform.nvim",
         },
         config = function()
             require("mason-conform").setup({
+                ensure_install = {
+                    "php-cs-fixer",
+                    "blade-formatter",
+                },
             })
         end
     }
